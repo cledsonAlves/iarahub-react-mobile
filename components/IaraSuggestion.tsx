@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useFocusEffect } from '@react-navigation/native';
 
 const SuggestionCard = styled.View`
   background-color: #0066CC;
@@ -53,9 +54,11 @@ const IaraSuggestion = () => {
   const [suggestion, setSuggestion] = useState('');
   const router = useRouter();
 
-  useEffect(() => {
-    fetchSuggestion();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchSuggestion();
+    }, [])
+  );
 
   const fetchSuggestion = async () => {
     try {
@@ -64,7 +67,7 @@ const IaraSuggestion = () => {
         const { progress } = JSON.parse(userData);
         
         const response = await axios.post('https://bff-iarahub.vercel.app/api/ia/stackspot', {
-          prompt: `Com base no progresso atual do usuário de ${progress}, sugira um plano de estudo personalizado e conciso para AWS  em no máximo 3 linhas, e fale para o usuario o progresso dele.`,
+          prompt: `Com base no progresso atual do usuário de ${progress}, sugira um plano de estudo personalizado e conciso para AWS Developer Associate em no máximo 3 linhas`,
           system: "Você é um mentor especialista em AWS"
         });
 
@@ -76,7 +79,21 @@ const IaraSuggestion = () => {
     }
   };
 
-  return (
+  const ButtonContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+`;
+
+const ActionButton = styled.TouchableOpacity`
+  background-color: #003366;
+  padding: 12px 24px;
+  border-radius: 20px;
+  flex: 1;
+  align-items: center;
+`;
+
+return (
     <SuggestionCard>
       <SuggestionHeader>
         <SuggestionTitle>Sugestão da IARA</SuggestionTitle>
@@ -85,11 +102,19 @@ const IaraSuggestion = () => {
         </SuggestionIcon>
       </SuggestionHeader>
       <SuggestionContent>{suggestion}</SuggestionContent>
-      <StartButton onPress={() => router.push('/simulados')}>
-        <ButtonText>Começar</ButtonText>
-      </StartButton>
+      <ButtonContainer>
+        <ActionButton onPress={() => router.push({
+          pathname: '/study',
+          params: { suggestion }
+        })}>
+          <ButtonText>Estudar</ButtonText>
+        </ActionButton>
+        <ActionButton onPress={() => router.push('/simulados')}>
+          <ButtonText>Simulados</ButtonText>
+        </ActionButton>
+      </ButtonContainer>
     </SuggestionCard>
-  );
+);
 };
 
 export default IaraSuggestion;

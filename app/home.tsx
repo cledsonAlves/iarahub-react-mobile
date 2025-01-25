@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollView, View, Platform } from "react-native";
 import styled from "styled-components/native";
 import { useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import IaraSuggestion from "../components/IaraSuggestion";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from "@react-navigation/native";
 
 const Container = styled.View`
   flex: 1;
@@ -184,7 +185,28 @@ const BottomNav = styled.View`
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [userName, setUserName] = useState('');
+  const [userProgress, setUserProgress] = useState('0');
 
+
+  useFocusEffect(
+  React.useCallback(() => {
+    loadUserData();
+  }, [])
+);
+
+  const loadUserData = async () => {
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      if (userData) {
+        const user = JSON.parse(userData);
+        setUserName(user.name);
+        setUserProgress(user.progress || '0');
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  };
 
   const certifications = [
     { name: "Jackson", count: 7 },
@@ -199,7 +221,6 @@ export default function HomeScreen() {
     { id: "simulations", title: "Simulados", icon: "assignment" },
     { id: "tutors", title: "Tutores", icon: "school" },
   ];
-  
 
   return (
     <Container>
@@ -208,7 +229,7 @@ export default function HomeScreen() {
           <ProfileIconContainer>
             <Icon name="person" size={24} color="#666" />
           </ProfileIconContainer>
-          <WelcomeText>Bem-vindo Cledson</WelcomeText>
+          <WelcomeText>Bem-vindo {userName}</WelcomeText>
         </HeaderContainer>
 
         <ProgressRow>
@@ -225,18 +246,11 @@ export default function HomeScreen() {
           ))}
         </ProgressRow>
 
-        <HeaderContainer>
-          <ProfileIconContainer>
-            <Icon name="person" size={24} color="#666" />
-          </ProfileIconContainer>
-          <WelcomeText>Bem-vindo Cledson</WelcomeText>
-        </HeaderContainer>
-
         <IaraSuggestion />
 
         <PromotionCard>
           <PromotionTitle>Amplie seu conhecimento</PromotionTitle>
-          <ActionButton>
+          <ActionButton onPress={() => router.push('/simulados')}>
             <ActionButtonText>Acessar simulados</ActionButtonText>
           </ActionButton>
         </PromotionCard>
@@ -257,7 +271,7 @@ export default function HomeScreen() {
               key={module.id}
               onPress={() => {
                 if (module.id === "podcast") {
-                  router.push("/podcast"); // Caminho para a tela do podcast
+                  router.push("/podcast");
                 }
                 if (module.id === "simulations") {
                   router.push("/simulados");
