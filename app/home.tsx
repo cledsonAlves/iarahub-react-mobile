@@ -1,18 +1,20 @@
-import React from 'react';
-import { ScrollView, View, Platform } from 'react-native';
-import styled from 'styled-components/native';
-import { useRouter } from 'expo-router';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import React from "react";
+import { ScrollView, View, Platform } from "react-native";
+import styled from "styled-components/native";
+import { useRouter } from "expo-router";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import IaraSuggestion from "../components/IaraSuggestion";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Container = styled.View`
   flex: 1;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 `;
 
 const ScrollContainer = styled.ScrollView`
   flex: 1;
-  background-color: #FFFFFF;
-  margin-bottom: ${Platform.OS === 'ios' ? '80px' : '70px'};
+  background-color: #ffffff;
+  margin-bottom: ${Platform.OS === "ios" ? "80px" : "70px"};
 `;
 
 const HeaderContainer = styled.View`
@@ -25,7 +27,7 @@ const ProfileIconContainer = styled.View`
   width: 40px;
   height: 40px;
   border-radius: 20px;
-  background-color: #E0E0E0;
+  background-color: #e0e0e0;
   margin-right: 12px;
   justify-content: center;
   align-items: center;
@@ -52,14 +54,14 @@ const ProgressCircle = styled.View`
   width: 50px;
   height: 50px;
   border-radius: 25px;
-  background-color: #4A90E2;
+  background-color: #4a90e2;
   justify-content: center;
   align-items: center;
   margin-bottom: 8px;
 `;
 
 const PromotionCard = styled.View`
-  background-color: #F78C38;
+  background-color: #f78c38;
   margin: 16px;
   padding: 16px;
   border-radius: 12px;
@@ -84,7 +86,7 @@ const ActionButtonText = styled.Text`
 `;
 
 const SuggestionCard = styled.View`
-  background-color: #FFF3E0;
+  background-color: #fff3e0;
   margin: 16px;
   padding: 16px;
   border-radius: 12px;
@@ -111,7 +113,7 @@ const ModulesGrid = styled.View`
 const ModuleItem = styled.TouchableOpacity`
   width: 48%;
   aspect-ratio: 1;
-  background-color: #F78C38;
+  background-color: #f78c38;
   border-radius: 12px;
   justify-content: center;
   align-items: center;
@@ -144,7 +146,7 @@ const CertificationTitleLink = styled.Text`
 `;
 
 const CertificationCard = styled.View`
-  background-color: #4A90E2;
+  background-color: #4a90e2;
   padding: 12px;
   border-radius: 25px;
   flex-direction: row;
@@ -169,12 +171,13 @@ const BottomNav = styled.View`
   padding: 16px;
   background-color: white;
   border-top-width: 1px;
-  border-top-color: #E0E0E0;
+  border-top-color: #e0e0e0;
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  ${Platform.OS === 'ios' && `
+  ${Platform.OS === "ios" &&
+  `
     padding-bottom: 30px;
   `}
 `;
@@ -182,19 +185,21 @@ const BottomNav = styled.View`
 export default function HomeScreen() {
   const router = useRouter();
 
+
   const certifications = [
-    { name: 'Jackson', count: 7 },
-    { name: 'Maurilio Silva', count: 5 },
-    { name: 'Wesley Lima', count: 3 },
-    { name: 'Daniela Ines', count: 1 },
+    { name: "Jackson", count: 7 },
+    { name: "Maurilio Silva", count: 5 },
+    { name: "Wesley Lima", count: 3 },
+    { name: "Daniela Ines", count: 1 },
   ];
 
   const modules = [
-    { id: 'lab', title: 'Laboratórios', icon: 'science' },
-    { id: 'podcast', title: 'Podcast', icon: 'headset' },
-    { id: 'simulations', title: 'Simulados', icon: 'assignment' },
-    { id: 'tutors', title: 'Tutores', icon: 'school' },
+    { id: "lab", title: "Laboratórios", icon: "science" },
+    { id: "podcast", title: "Podcast", icon: "headset" },
+    { id: "simulations", title: "Simulados", icon: "assignment" },
+    { id: "tutors", title: "Tutores", icon: "school" },
   ];
+  
 
   return (
     <Container>
@@ -210,11 +215,24 @@ export default function HomeScreen() {
           {[1, 2, 3].map((item) => (
             <ProgressItem key={item}>
               <ProgressCircle>
-                <Icon name={item === 1 ? 'star' : item === 2 ? 'waves' : 'computer'} size={24} color="white" />
+                <Icon
+                  name={item === 1 ? "star" : item === 2 ? "waves" : "computer"}
+                  size={24}
+                  color="white"
+                />
               </ProgressCircle>
             </ProgressItem>
           ))}
         </ProgressRow>
+
+        <HeaderContainer>
+          <ProfileIconContainer>
+            <Icon name="person" size={24} color="#666" />
+          </ProfileIconContainer>
+          <WelcomeText>Bem-vindo Cledson</WelcomeText>
+        </HeaderContainer>
+
+        <IaraSuggestion />
 
         <PromotionCard>
           <PromotionTitle>Amplie seu conhecimento</PromotionTitle>
@@ -238,8 +256,11 @@ export default function HomeScreen() {
             <ModuleItem
               key={module.id}
               onPress={() => {
-                if (module.id === 'podcast') {
-                  router.push('/podcast'); // Caminho para a tela do podcast
+                if (module.id === "podcast") {
+                  router.push("/podcast"); // Caminho para a tela do podcast
+                }
+                if (module.id === "simulations") {
+                  router.push("/simulados");
                 }
               }}
             >
@@ -259,7 +280,9 @@ export default function HomeScreen() {
             <CertificationCard key={index}>
               <Icon name="verified" size={24} color="white" />
               <CertificationText>{cert.name}</CertificationText>
-              <CertificationCount>{cert.count} certificações</CertificationCount>
+              <CertificationCount>
+                {cert.count} certificações
+              </CertificationCount>
             </CertificationCard>
           ))}
         </CertificationSection>

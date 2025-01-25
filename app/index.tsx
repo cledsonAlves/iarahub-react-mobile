@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { login } from './auth/auth'; 
 
+
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -12,8 +13,8 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       // @ dados mocado , remover
-     //const response = await login(email, password); 
-      const response = await login("cp@gmail.com", "123"); 
+     const response = await login(email, password); 
+      //const response = await login("cp@gmail.com", "123"); 
 
       // Armazena os dados do usuário e o token no AsyncStorage
       await AsyncStorage.setItem('authToken', response.token);
