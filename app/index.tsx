@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { login } from './auth/auth';
+import { authService } from './services/auth';
 
 
 
@@ -14,20 +14,12 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      // @ dados mocado , remover
-     const response = await login(email, password); 
-      //const response = await login("cp@gmail.com", "123"); 
-
-      // Armazena os dados do usuário e o token no AsyncStorage
-      await AsyncStorage.setItem('authToken', response.token);
-      await AsyncStorage.setItem('userData', JSON.stringify(response.user));
-
-     // Alert.alert('Login bem-sucedido!', `Bem-vindo, ${response.user.name}`);
-
-      // Redireciona para a tela de boas-vindas
+      const response = await authService.login({ email, password });
+      await AsyncStorage.setItem('authToken', response.data.token);
+      await AsyncStorage.setItem('userData', JSON.stringify(response.data.user));
       router.push('/screens/welcome');
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível fazer login. Verifique suas credenciais.');
+      Alert.alert('Erro', 'Credenciais inválidas');
     }
   };
 

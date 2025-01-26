@@ -16,7 +16,7 @@ export default function Register() {
       const response = await axios.post('https://bff-iarahub.vercel.app/api/users/register', payload);
 
       Alert.alert('Sucesso', response.data.message);
-      router.push('/login'); // Redireciona para a tela de login
+      router.push('/screens/welcome'); // Redireciona para a tela de login
     } catch (error) {
       Alert.alert('Erro', 'Não foi possível cadastrar. Tente novamente.');
     }

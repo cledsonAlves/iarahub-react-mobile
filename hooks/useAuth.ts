@@ -1,6 +1,7 @@
+// hooks/useAuth.ts
 import { authService } from "@/app/services/auth";
 import { useState } from "react";
-import { AsyncStorage } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function useAuth() {
     const [user, setUser] = useState(null);
@@ -8,10 +9,12 @@ export function useAuth() {
     const login = async (credentials: any) => {
       try {
         const response = await authService.login(credentials);
-        await AsyncStorage.setItem('userData', JSON.stringify(response.data.user));
-        await AsyncStorage.setItem('authToken', response.data.token);
-        setUser(response.data.user);
-        return response.data;
+        if (response?.data) {
+          await AsyncStorage.setItem('userData', JSON.stringify(response.data.user));
+          await AsyncStorage.setItem('authToken', response.data.token);
+          setUser(response.data.user);
+          return response.data;
+        }
       } catch (error) {
         throw error;
       }
@@ -31,4 +34,4 @@ export function useAuth() {
     };
    
     return { user, login, updateProgress };
-   }
+}
