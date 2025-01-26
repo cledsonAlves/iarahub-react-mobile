@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { login } from './auth/auth'; 
+import { login } from './auth/auth';
+
+
 
 
 export default function Login() {
@@ -23,7 +25,7 @@ export default function Login() {
      // Alert.alert('Login bem-sucedido!', `Bem-vindo, ${response.user.name}`);
 
       // Redireciona para a tela de boas-vindas
-      router.push('/welcome');
+      router.push('/screens/welcome');
     } catch (error) {
       Alert.alert('Erro', 'Não foi possível fazer login. Verifique suas credenciais.');
     }

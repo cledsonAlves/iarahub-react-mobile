@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+// components/modules/IaraSuggestion.tsx
+import React, { useState } from 'react';
 import styled from 'styled-components/native';
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useFocusEffect } from '@react-navigation/native';
+import { iaService } from '@/app/services/ia';
+import { storageService } from '@/app/services/storage';
+import { theme } from '@/app/styles/theme';
 
 const SuggestionCard = styled.View`
-  background-color: #0066CC;
-  margin: 16px;
-  padding: 16px;
+  background-color: ${theme.colors.secondary};
+  margin: ${theme.spacing.medium}px;
+  padding: ${theme.spacing.medium}px;
   border-radius: 12px;
 `;
 
@@ -38,11 +40,18 @@ const SuggestionContent = styled.Text`
   margin-bottom: 12px;
 `;
 
-const StartButton = styled.TouchableOpacity`
-  background-color: #003366;
+const ButtonContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+`;
+
+const ActionButton = styled.TouchableOpacity`
+  background-color: rgba(0, 0, 0, 0.2);
   padding: 12px 24px;
   border-radius: 20px;
-  align-self: flex-start;
+  flex: 1;
+  align-items: center;
 `;
 
 const ButtonText = styled.Text`
@@ -62,16 +71,13 @@ const IaraSuggestion = () => {
 
   const fetchSuggestion = async () => {
     try {
-      const userData = await AsyncStorage.getItem('userData');
+      const userData = await storageService.getUserData();
       if (userData) {
-        const { progress } = JSON.parse(userData);
-        
-        const response = await axios.post('https://bff-iarahub.vercel.app/api/ia/stackspot', {
-          prompt: `Com base no progresso atual do usuário de ${progress}, sugira um plano de estudo personalizado e conciso para AWS Developer Associate em no máximo 3 linhas`,
-          system: "Você é um mentor especialista em AWS"
-        });
-
-        setSuggestion(response.data.message);
+        const response = await iaService.getStudyPlan(
+          userData.progress || '0', 
+          'AWS Developer Associate'
+        );
+        setSuggestion(response.message);
       }
     } catch (error) {
       console.error('Error fetching suggestion:', error);
@@ -79,21 +85,7 @@ const IaraSuggestion = () => {
     }
   };
 
-  const ButtonContainer = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 10px;
-`;
-
-const ActionButton = styled.TouchableOpacity`
-  background-color: #003366;
-  padding: 12px 24px;
-  border-radius: 20px;
-  flex: 1;
-  align-items: center;
-`;
-
-return (
+  return (
     <SuggestionCard>
       <SuggestionHeader>
         <SuggestionTitle>Sugestão da IARA</SuggestionTitle>
@@ -103,18 +95,20 @@ return (
       </SuggestionHeader>
       <SuggestionContent>{suggestion}</SuggestionContent>
       <ButtonContainer>
-        <ActionButton onPress={() => router.push({
-          pathname: '/study',
-          params: { suggestion }
-        })}>
+        <ActionButton 
+          onPress={() => router.push({
+            pathname: '/screens/study',
+            params: { suggestion }
+          })}
+        >
           <ButtonText>Estudar</ButtonText>
         </ActionButton>
-        <ActionButton onPress={() => router.push('/simulados')}>
+        <ActionButton onPress={() => router.push('/screens/simulados')}>
           <ButtonText>Simulados</ButtonText>
         </ActionButton>
       </ButtonContainer>
     </SuggestionCard>
-);
+  );
 };
 
 export default IaraSuggestion;

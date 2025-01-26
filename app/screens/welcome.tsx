@@ -91,7 +91,7 @@ export default function Welcome() {
   }
 
   const navigateToTutorial = () => {
-    router.push('/tutorial');
+    router.push('/screens/tutorial');
   };
 
   return (

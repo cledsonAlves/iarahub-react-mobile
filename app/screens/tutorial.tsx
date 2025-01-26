@@ -66,7 +66,7 @@ export default function Tutorial() {
   const router = useRouter();
 
   const handleFinishTutorial = () => {
-    router.push('/modulos'); // Redireciona para a tela principal após o tutorial
+    router.push('/screens/modulos'); // Redireciona para a tela principal após o tutorial
   };
 
   const handleSkipIntroduction = () => {

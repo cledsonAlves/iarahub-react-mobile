@@ -106,7 +106,7 @@ export default function ModulesScreen() {
   ];
 
   const handleModuleSelect = (moduleId) => {
-    router.push(`/home`);
+    router.push(`/screens/home`);
   };
 
   return (
