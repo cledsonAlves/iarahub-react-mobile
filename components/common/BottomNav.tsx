@@ -1,35 +1,64 @@
-// components/common/BottomNav.tsx 
+// components/common/BottomNav.tsx
 import React from 'react';
+import { View, TouchableOpacity, Platform } from 'react-native';
 import styled from 'styled-components/native';
+import { useRouter, usePathname } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Platform } from 'react-native';
 import { theme } from '@/app/styles/theme';
 
-
 const NavContainer = styled.View`
-  flex-direction: row;
-  justify-content: space-around;
-  padding: 16px;
-  background-color: white;
-  border-top-width: 1px;
-  border-top-color: #e0e0e0;
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  ${Platform.OS === "ios" &&
-  `
-    padding-bottom: 30px;
-  `}
+  background-color: ${theme.colors.background};
+  flex-direction: row;
+  justify-content: space-around;
+  padding-bottom: ${Platform.OS === 'ios' ? '20px' : '10px'};
+  padding-top: 10px;
+  border-top-width: 1px;
+  border-top-color: ${theme.colors.border};
+`;
+
+const NavButton = styled.TouchableOpacity<{ active: boolean }>`
+  align-items: center;
+  padding: 5px;
+  min-width: 70px;
+`;
+
+const NavText = styled.Text<{ active: boolean }>`
+  color: ${props => props.active ? theme.colors.primary : theme.colors.text.secondary};
+  font-size: 12px;
+  margin-top: 2px;
 `;
 
 export const BottomNav = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const navItems = [
+    { icon: 'home', label: 'Home', route: '/screens/home' },
+    { icon: 'mic', label: 'Podcast', route: '/screens/podcast' },
+    { icon: 'message', label: 'Chat', route: '/screens/chat' },
+    { icon: 'settings', label: 'Config', route: '/screens/settings' }
+  ];
+
   return (
     <NavContainer>
-      <Icon name="home" size={24} color={theme.colors.primary} />
-      <Icon name="mic" size={24} color="#666" />
-      <Icon name="chat" size={24} color="#666" />
-      <Icon name="settings" size={24} color="#666" />
+      {navItems.map((item) => (
+        <NavButton
+          key={item.route}
+          active={pathname === item.route}
+          onPress={() => router.push(item.route)}
+        >
+          <Icon
+            name={item.icon}
+            size={24}
+            color={pathname === item.route ? theme.colors.primary : theme.colors.text.secondary}
+          />
+          <NavText active={pathname === item.route}>{item.label}</NavText>
+        </NavButton>
+      ))}
     </NavContainer>
   );
 };

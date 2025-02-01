@@ -13,6 +13,9 @@ export default function Layout() {
       <Stack.Screen name="screens/podcast" options={{ headerShown: true, title: 'Podcast' }} />
       <Stack.Screen name="screens/simulados" options={{ headerShown: true, title: 'Simulados' }} />
       <Stack.Screen name="screens/study" options={{ headerShown: true, title: 'Material de Estudo' }} />
+      <Stack.Screen name="screens/settings" options={{ headerShown: true, title: 'Configurações' }} />
+      <Stack.Screen name="screens/chat" options={{ headerShown: false }} />
     </Stack>
   );
 }
+
