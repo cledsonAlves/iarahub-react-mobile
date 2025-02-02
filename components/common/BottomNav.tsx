@@ -40,8 +40,12 @@ export const BottomNav = () => {
     { icon: 'home', label: 'Home', route: '/screens/home' },
     { icon: 'mic', label: 'Podcast', route: '/screens/podcast' },
     { icon: 'message', label: 'Chat', route: '/screens/chat' },
+    { icon: 'image', label: 'Arquiteto', route: '/screens/imageAnalyse'},
     { icon: 'settings', label: 'Config', route: '/screens/settings' }
+    
   ];
+
+ 
 
   return (
     <NavContainer>

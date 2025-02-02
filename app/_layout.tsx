@@ -1,6 +1,7 @@
 // app/_layout.tsx
 import { Stack } from 'expo-router';
 
+
 export default function Layout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -15,6 +16,7 @@ export default function Layout() {
       <Stack.Screen name="screens/study" options={{ headerShown: true, title: 'Material de Estudo' }} />
       <Stack.Screen name="screens/settings" options={{ headerShown: true, title: 'Configurações' }} />
       <Stack.Screen name="screens/chat" options={{ headerShown: false }} />
+      <Stack.Screen name="screens/imageAnalyse" options={{ headerShown: false }} />
     </Stack>
   );
 }

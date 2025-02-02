@@ -1,21 +1,18 @@
 // app/screens/chat.tsx
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  View, 
-  ScrollView, 
-  TextInput, 
-  TouchableOpacity, 
-  KeyboardAvoidingView, 
-  Platform,
-  ActivityIndicator
-} from 'react-native';
+import { SafeAreaView, Platform, KeyboardAvoidingView, ScrollView, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { theme } from '@/app/styles/theme';
 import { BottomNav } from '@/components/common/BottomNav';
 import { iaService } from '@/app/services/ia';
 
-const Container = styled.View`
+// Melhorias implementadas:
+// - Uso do SafeAreaView para suportar dispositivos com notch e áreas seguras.
+// - Adição do keyboardVerticalOffset no KeyboardAvoidingView para ajustar o posicionamento do teclado.
+// - Configuração do contentContainerStyle e keyboardShouldPersistTaps no ScrollView para melhor responsividade.
+
+const Container = styled.SafeAreaView`
   flex: 1;
   background-color: ${theme.colors.background};
 `;
@@ -34,14 +31,17 @@ const HeaderTitle = styled.Text`
   margin-left: ${theme.spacing.small}px;
 `;
 
-const ChatContainer = styled.ScrollView`
+const ChatContainer = styled(ScrollView).attrs(() => ({
+  contentContainerStyle: { flexGrow: 1 },
+  keyboardShouldPersistTaps: 'handled'
+}))`
   flex: 1;
   padding: ${theme.spacing.small}px;
 `;
 
 const MessageContainer = styled.View<{ isUser: boolean }>`
   flex-direction: row;
-  justify-content: ${props => props.isUser ? 'flex-end' : 'flex-start'};
+  justify-content: ${props => (props.isUser ? 'flex-end' : 'flex-start')};
   margin-bottom: ${theme.spacing.small}px;
 `;
 
@@ -49,12 +49,12 @@ const MessageBubble = styled.View<{ isUser: boolean }>`
   max-width: 80%;
   padding: ${theme.spacing.medium}px;
   border-radius: 20px;
-  background-color: ${props => props.isUser ? theme.colors.primary : theme.colors.surface};
+  background-color: ${props => (props.isUser ? theme.colors.primary : theme.colors.surface)};
   ${theme.shadows.small}
 `;
 
 const MessageText = styled.Text<{ isUser: boolean }>`
-  color: ${props => props.isUser ? 'white' : theme.colors.text.primary};
+  color: ${props => (props.isUser ? 'white' : theme.colors.text.primary)};
   font-size: 16px;
 `;
 
@@ -80,7 +80,7 @@ const SendButton = styled.TouchableOpacity<{ disabled: boolean }>`
   width: 40px;
   height: 40px;
   border-radius: 20px;
-  background-color: ${props => props.disabled ? theme.colors.text.disabled : theme.colors.primary};
+  background-color: ${props => (props.disabled ? theme.colors.text.disabled : theme.colors.primary)};
   justify-content: center;
   align-items: center;
 `;
@@ -205,18 +205,19 @@ export default function ChatScreen() {
     <Container>
       <Header>
         <Icon name="chat" size={24} color="white" />
-        <HeaderTitle>IARA Assistant</HeaderTitle>
+        <HeaderTitle>IARA Tutor</HeaderTitle>
       </Header>
 
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 70}
         style={{ flex: 1 }}
       >
         <ChatContainer ref={scrollViewRef}>
           {messages.length === 0 ? (
             <>
               <WelcomeMessage>
-                <WelcomeTitle>Bem-vindo ao IARA Assistant!</WelcomeTitle>
+                <WelcomeTitle>Bem-vindo ao IARA Tutor!</WelcomeTitle>
                 <WelcomeText>
                   Estou aqui para ajudar com suas dúvidas sobre AWS e preparação para certificações.
                   O que você gostaria de saber?
@@ -224,7 +225,7 @@ export default function ChatScreen() {
               </WelcomeMessage>
               <SuggestionContainer>
                 {suggestions.map((suggestion, index) => (
-                  <SuggestionButton 
+                  <SuggestionButton
                     key={index}
                     onPress={() => handleSuggestionPress(suggestion)}
                   >
@@ -259,14 +260,14 @@ export default function ChatScreen() {
             onChangeText={setInputText}
             onSubmitEditing={handleSend}
           />
-          <SendButton 
+          <SendButton
             onPress={handleSend}
             disabled={inputText.trim() === '' || isLoading}
           >
-            <Icon 
-              name="send" 
-              size={20} 
-              color={inputText.trim() === '' || isLoading ? '#999' : 'white'} 
+            <Icon
+              name="send"
+              size={20}
+              color={inputText.trim() === '' || isLoading ? '#999' : 'white'}
             />
           </SendButton>
         </InputContainer>
